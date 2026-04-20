@@ -56,6 +56,7 @@ def make_timeseries(df):
         ('Temperature', '@Temperature{0.1f} °C'),
     ], formatters={'@Date': 'datetime'})
 
+    df = df[df['Date'] >= '2025-01-01'].copy()
     t_lo = float(df['Temperature'].quantile(0.05))
     t_hi = float(df['Temperature'].quantile(0.95))
 
@@ -69,27 +70,20 @@ def make_timeseries(df):
         responsive=True, height=500,
     )
 
-    df['year'] = df['Date'].dt.year
-    year_colors = ['#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
-                   '#e67e22', '#1abc9c', '#e91e63', '#ff5722']
+    df = df[df['Date'] >= '2025-01-01'].copy()
+    w = min(11, max(3, len(df) // 3))
+    rolling = df.sort_values('Date')['Temperature'].rolling(window=w, min_periods=3, center=True).median()
+    valid = rolling.notna()
     curves = []
-    for i, year in enumerate(sorted(df['year'].unique())):
-        yr = df[df['year'] == year].sort_values('Date').reset_index(drop=True)
-        if len(yr) < 5:
-            continue
-        w = min(11, max(3, len(yr) // 3))
-        rolling = yr['Temperature'].rolling(window=w, min_periods=3, center=True).median()
-        valid = rolling.notna()
-        if valid.sum() < 5:
-            continue
+    if valid.sum() >= 5:
         vals = rolling[valid].values
         sg_w = max(5, min(len(vals), 15))
         if sg_w % 2 == 0:
             sg_w -= 1
         smoothed = savgol_filter(vals, sg_w, 2)
         curves.append(
-            hv.Curve((yr['Date'][valid].values, smoothed), label=str(year))
-            .opts(color=year_colors[i % len(year_colors)], line_width=2.5)
+            hv.Curve((df.sort_values('Date')['Date'][valid].values, smoothed))
+            .opts(color='#0077b6', line_width=2.5)
         )
 
     opts = dict(title='Sea Surface Temperature — Time Series',
