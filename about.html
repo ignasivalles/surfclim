@@ -6,7 +6,6 @@
     <title>About — surfclim</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 <div class="app">
@@ -14,7 +13,7 @@
     <!-- ══ TOP BAR ══ -->
     <header class="top-bar">
         <div class="top-bar-inner">
-            <a class="brand" href="index.html" style="text-decoration:none;color:inherit">surfclim</a>
+            <a class="brand" href="index.html">surfclim</a>
             <nav class="pill-nav" role="navigation" aria-label="Sections">
                 <a class="nav-pill" href="stories.html">Stories</a>
                 <a class="nav-pill active" href="about.html">About</a>
@@ -24,7 +23,28 @@
 
     <!-- ══ CONTENT ══ -->
     <main class="prose-section">
-        <div class="prose-body" id="md-content">Loading…</div>
+        <div class="prose-body">
+            <h1>About surfclim</h1>
+
+            <p>The ocean is warming. But coastal seawater temperature is surprisingly hard to measure:
+            satellites struggle near the coast, and research vessels don't surf, people do.</p>
+
+            <p>surfclim is an initiative that monitors seawater temperature along the
+            Cantabrian coast, one session at a time. Every time someone paddles out with an
+            <a href="https://electricblue.eu/" target="_blank" rel="noopener">EnvLogger</a> sensor
+            attached to their board, they contribute a real measurement to the record. The sensor
+            logs water temperature throughout the session; a minimum-variance algorithm then
+            identifies the true immersion period, filtering out the moments when the board is out
+            of the water and the sensor is exposed to air.</p>
+
+            <p>The observations are compared against a historical baseline: daily temperature records
+            from Sardinero beach, Santander, spanning 1970–1978. This lets us compute anomalies
+            and track how today's ocean compares to real observations from the past.</p>
+
+            <p>surfclim is an evolution of <a href="https://pom-cost.github.io" target="_blank" rel="noopener">Poniendo Ojos al Mar</a>,
+            a citizen-science initiative based in Santander as part of <a href="https://thinkinazul.cantabria.es/" target=""_blank" rel="noopener">ThinkinAzul</a>. Data is updated automatically
+            every day.</p>
+        </div>
     </main>
 
     <!-- ══ FOOTER ══ -->
@@ -36,16 +56,5 @@
     </footer>
 
 </div>
-
-<script>
-    fetch('about.md')
-        .then(r => r.text())
-        .then(md => {
-            document.getElementById('md-content').innerHTML = marked.parse(md);
-        })
-        .catch(() => {
-            document.getElementById('md-content').textContent = 'Could not load about.md';
-        });
-</script>
 </body>
 </html>

@@ -26,7 +26,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install pandas numpy scipy holoviews bokeh openpyxl
+        run: pip install pandas numpy scipy plotly openpyxl
 
       - name: Process raw files and regenerate plots
         run: python src/process_all.py --raw-dir /tmp/pom-cost/data/raw

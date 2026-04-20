@@ -25,6 +25,7 @@ body {
 }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
+a.brand { color: var(--text); }
 
 .app {
     min-height: 100vh;
@@ -281,47 +282,102 @@ a:hover { text-decoration: underline; }
    PROSE PAGES (About, Stories)
    ═══════════════════════════════════════════ */
 .prose-section {
-    max-width: 720px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 24px;
+    padding: 48px 24px 64px;
     flex: 1;
+    width: 100%;
+}
+
+.prose-body {
+    max-width: 680px;
 }
 
 .prose-body h1 {
-    font-size: 1.7rem;
+    font-size: 1.75rem;
     font-weight: 800;
     color: var(--text);
-    margin-bottom: 24px;
+    margin: 0 0 28px;
     letter-spacing: -0.4px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
 }
 
 .prose-body h2 {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: var(--text);
-    margin: 32px 0 10px;
+    margin: 36px 0 10px;
+    padding-left: 10px;
+    border-left: 3px solid var(--accent);
+}
+
+.prose-body h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 24px 0 8px;
 }
 
 .prose-body p {
-    font-size: 0.93rem;
+    font-size: 0.95rem;
     color: var(--text);
-    line-height: 1.7;
-    margin-bottom: 14px;
+    line-height: 1.75;
+    margin: 0 0 18px;
 }
 
 .prose-body a { color: var(--accent); }
 
+.prose-body strong { font-weight: 700; }
+
+.prose-body em { font-style: italic; }
+
 .prose-body hr {
     border: none;
     border-top: 1px solid var(--border);
-    margin: 32px 0;
+    margin: 40px 0;
 }
 
-.prose-body em { color: var(--text-muted); }
+.prose-body ul,
+.prose-body ol {
+    margin: 0 0 18px 0;
+    padding-left: 1.6em;
+}
+
+.prose-body li {
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.75;
+    margin-bottom: 6px;
+}
+
+.prose-body li + li { margin-top: 2px; }
+
+.prose-body code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+}
+
+.prose-body blockquote {
+    border-left: 3px solid var(--accent);
+    margin: 20px 0;
+    padding: 10px 18px;
+    background: var(--bg-card);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.prose-body blockquote p { margin-bottom: 0; color: var(--text-muted); }
 
 .stories-coming {
     color: var(--text-muted);
     font-style: italic;
+    font-size: 0.95rem;
 }
 
 /* ═══════════════════════════════════════════
@@ -353,6 +409,9 @@ a:hover { text-decoration: underline; }
 
     .iframe-wrapper iframe,
     #map { height: 380px; }
+
+    .prose-section  { padding: 32px 16px 48px; }
+    .prose-body h1  { font-size: 1.4rem; }
 }
 
 @media (max-width: 400px) {
