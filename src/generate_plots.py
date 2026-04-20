@@ -108,18 +108,28 @@ def make_climatology(df):
         ('Anomaly',     '@Temperature_Anomaly{+0.1f} °C'),
     ], formatters={'@Date': 'datetime'})
 
-    scatter = hv.Scatter(
-        df, kdims=['fractional_time'],
-        vdims=['Temperature', 'Temperature_Anomaly', 'Date']
-    ).opts(
-        tools=[hover, 'pan', 'wheel_zoom', 'box_zoom', 'reset'],
-        color='Temperature_Anomaly', cmap='coolwarm', clim=(-3, 3),
-        size=6, alpha=0.6,
-        xlabel='Month', ylabel='Temperature [°C]',
-        responsive=True,
-    )
+    year_colors = ['#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
+                   '#e67e22', '#1abc9c', '#e91e63', '#ff5722']
+    df = df.copy()
+    df['year'] = pd.to_datetime(df['Date']).dt.year
+    years = sorted(df[df['year'] >= 2025]['year'].unique())
+    scatter_opts = dict(tools=[hover, 'pan', 'wheel_zoom', 'box_zoom', 'reset'],
+                        size=6, alpha=0.5, xlabel='Month', ylabel='Temperature [°C]',
+                        responsive=True)
+    scatters = []
+    pre = df[df['year'] < 2025]
+    if len(pre):
+        scatters.append(hv.Scatter(pre, kdims=['fractional_time'],
+                                   vdims=['Temperature', 'Temperature_Anomaly', 'Date'])
+                        .opts(color='grey', **scatter_opts))
+    for i, year in enumerate(years):
+        yr = df[df['year'] == year]
+        scatters.append(hv.Scatter(yr, kdims=['fractional_time'],
+                                   vdims=['Temperature', 'Temperature_Anomaly', 'Date'],
+                                   label=str(year))
+                        .opts(color=year_colors[i % len(year_colors)], **scatter_opts))
 
-    return (climato * scatter * plot_rolling_by_year(df)).opts(
+    return (climato * hv.Overlay(scatters) * plot_rolling_by_year(df)).opts(
         title='Sea Surface Temperature — Climatological View',
         xticks=month_ticks, xlim=(0, 12),
         show_grid=True, legend_position='top_left',
