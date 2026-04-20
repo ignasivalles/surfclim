@@ -107,7 +107,7 @@ def process_raw_files(raw_dir):
             continue
         q1, q3 = grp.quantile(0.25), grp.quantile(0.75)
         iqr = q3 - q1
-        keep.loc[idx] = (grp >= q1 - 2 * iqr) & (grp <= q3 + 2 * iqr)
+        keep.loc[idx] = grp <= q3 + 2 * iqr  # upper only: keep cold upwelling events
     all_data = all_data[keep].reset_index(drop=True)
     print(f"After outlier filter: {len(all_data)} rows (removed {before - len(all_data)})")
 
