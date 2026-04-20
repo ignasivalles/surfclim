@@ -380,6 +380,26 @@ a.brand { color: var(--text); }
     font-size: 0.95rem;
 }
 
+.prose-figure {
+    margin: 32px 0 0;
+}
+
+.prose-figure img {
+    width: 100%;
+    max-width: 560px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: block;
+}
+
+.prose-figure figcaption {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-style: italic;
+    max-width: 560px;
+}
+
 /* ═══════════════════════════════════════════
    FOOTER
    ═══════════════════════════════════════════ */
