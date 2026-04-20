@@ -278,6 +278,53 @@ a:hover { text-decoration: underline; }
 .data-popup { font-family: var(--font); font-size: 0.82rem; }
 
 /* ═══════════════════════════════════════════
+   PROSE PAGES (About, Stories)
+   ═══════════════════════════════════════════ */
+.prose-section {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    flex: 1;
+}
+
+.prose-body h1 {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 24px;
+    letter-spacing: -0.4px;
+}
+
+.prose-body h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 32px 0 10px;
+}
+
+.prose-body p {
+    font-size: 0.93rem;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 14px;
+}
+
+.prose-body a { color: var(--accent); }
+
+.prose-body hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+}
+
+.prose-body em { color: var(--text-muted); }
+
+.stories-coming {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* ═══════════════════════════════════════════
    FOOTER
    ═══════════════════════════════════════════ */
 .site-footer {
