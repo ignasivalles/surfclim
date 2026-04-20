@@ -1,0 +1,13 @@
+name: surfclim
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pandas
+  - numpy
+  - scipy
+  - holoviews
+  - bokeh
+  - openpyxl
+  - pip

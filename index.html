@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>surfclim — Cantabrian Sea Surface Temperature</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <!-- PapaParse (CSV) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" crossorigin=""></script>
+
+    <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+<div class="app">
+
+    <!-- ══ TOP BAR ══ -->
+    <header class="top-bar">
+        <div class="top-bar-inner">
+            <span class="brand">surfclim</span>
+            <nav class="pill-nav" id="main-nav" role="navigation" aria-label="Sections">
+                <a class="nav-pill" href="#map-section">Map</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ══ TITLE ══ -->
+    <section class="title-section">
+        <h1 class="page-title">Cantabrian Sea Surface Temperature</h1>
+        <p class="page-subtitle">
+            Citizen-science SST monitoring along the Cantabrian coast (43.2°N–43.9°N, 5°W–3°W),
+            compared against the Sardinero historical record (1970–1978).
+        </p>
+    </section>
+
+    <!-- ══ STAT CARDS ══ -->
+    <section class="cards-section" aria-label="Summary statistics">
+        <div class="cards-row">
+
+            <div class="stat-card">
+                <div class="card-label">Latest Reading</div>
+                <div class="card-value" id="card1-value">—</div>
+                <div class="card-sub"   id="card1-sub">—</div>
+                <div class="card-date"  id="card1-date"></div>
+            </div>
+
+            <div class="stat-card">
+                <div class="card-label">Monthly Average</div>
+                <div class="card-value" id="card2-value">—</div>
+                <div class="card-sub"   id="card2-sub">—</div>
+                <div class="card-date"  id="card2-date"></div>
+            </div>
+
+            <div class="stat-card">
+                <div class="card-label">Annual Average</div>
+                <div class="card-value" id="card3-value">—</div>
+                <div class="card-sub"   id="card3-sub">—</div>
+                <div class="card-date"  id="card3-date"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ══ MAP ══ -->
+    <section class="chart-section" id="map-section">
+        <div class="chart-header">
+            <h2 class="chart-title">Observation Map</h2>
+            <p class="chart-desc">
+                All recorded measurements coloured by temperature anomaly vs the 1970–78 reference.
+                Use the month filter to explore seasonality.
+            </p>
+        </div>
+        <div class="map-wrapper">
+            <div id="map"></div>
+        </div>
+    </section>
+
+    <!-- ══ TIME SERIES ══ -->
+    <section class="chart-section" id="timeseries">
+        <div class="chart-header">
+            <h2 class="chart-title">Time Series</h2>
+            <p class="chart-desc">
+                Temperature observations over time, with a smoothed trend per year.
+            </p>
+        </div>
+        <div class="iframe-wrapper">
+            <iframe id="iframe-timeseries" src="plots/timeseries_plot.html"
+                    title="Time series of sea surface temperature"
+                    loading="lazy" allowfullscreen></iframe>
+        </div>
+    </section>
+
+    <!-- ══ CLIMATOLOGY ══ -->
+    <section class="chart-section" id="climatology">
+        <div class="chart-header">
+            <h2 class="chart-title">Climatological View</h2>
+            <p class="chart-desc">
+                Observations against the 1970–1978 seasonal cycle: IQR band (light blue),
+                median (blue), year trend (coloured curve), points coloured by anomaly.
+            </p>
+        </div>
+        <div class="iframe-wrapper">
+            <iframe id="iframe-climatology" src="plots/climatology_plot.html"
+                    title="Climatological view of sea surface temperature"
+                    loading="lazy" allowfullscreen></iframe>
+        </div>
+    </section>
+
+    <!-- ══ FOOTER ══ -->
+    <footer class="site-footer">
+        <p class="footer-copy">
+            &copy; 2025 surfclim &middot;
+            powered by <a href="https://github.com/ignasivalles" target="_blank" rel="noopener">@ignasivalles</a>
+        </p>
+    </footer>
+
+</div><!-- /app -->
+
+<script src="assets/main.js"></script>
+</body>
+</html>
