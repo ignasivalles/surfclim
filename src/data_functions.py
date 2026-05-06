@@ -1,9 +1,6 @@
 import numpy as np
 import pandas as pd
-import holoviews as hv
 from scipy.signal import savgol_filter
-from bokeh.models import HoverTool
-hv.extension('bokeh')
 
 def detect_water_temp(temp, time, window_size=6, only_water_val=True):
 
@@ -36,9 +33,6 @@ def detect_water_temp(temp, time, window_size=6, only_water_val=True):
     else:
       return water_data, water_time, moving_var, var_threshold
 
-
-import pandas as pd
-import numpy as np
 
 def detect_water_temp2(temp, time, window_size=6, only_water_val=True):
     def calculate_state(temp, moving_var, var_threshold):
@@ -180,175 +174,6 @@ def extract_lat_lon_temp_time(file_path):
     return data[['time', 'temp', 'lat', 'lon']]
 
 
-def plot_climatological_year(file_path):
-    
-    # Load the dataset
-    df = pd.read_excel(file_path, header=0)
-    df = df.rename(columns={'año': 'year', 'mes': 'month', 'dia': 'day', 'temperatura agua': 'temperatura'})
-
-    # Create a Date column
-    df['Date'] = pd.to_datetime(df[['year', 'month', 'day']])
-    df['Date'] = df['Date'].astype('datetime64[ns]')
-
-    # Group by month for climatological statistics
-    grouped = df.groupby('month')['temperatura']
-    q1 = grouped.quantile(0.25)
-    q3 = grouped.quantile(0.75)
-    iqr = q3 - q1
-    lower_whisker = q1 - 1.5 * iqr
-    upper_whisker = q3 + 1.5 * iqr
-    medians = grouped.median()
-
-
-    # Apply the function to calculate fractional year
-    print(df['Date'])
-    df['fractional_time'] = [datetime_to_decimal_year(date) for date in df['Date'].values]
-
-
-    # Weekly indices for interpolation
-    weekly_indices = np.linspace(0, 12, 84)
-    weeks_per_month = [4.345] * 12
-    cumulative_weeks = np.cumsum([0] + weeks_per_month)
-
-    # Interpolate whiskers and medians to weekly scale
-    print(len(df['fractional_time']))
-    print(len(medians))
-    weekly_medians = np.interp(weekly_indices, np.arange(0,12,1), medians)
-    weekly_lower = np.interp(weekly_indices, np.arange(0,12,1), lower_whisker)
-    weekly_upper = np.interp(weekly_indices, np.arange(0,12,1), upper_whisker)
-
-    # Smooth whiskers and medians
-    smoothed_medians = savgol_filter(weekly_medians, 7, 2)
-    smoothed_lower = savgol_filter(weekly_lower, 7, 2)
-    smoothed_upper = savgol_filter(weekly_upper, 7, 2)
-
-    # Create the climatological year plot using Holoviews (with vdims)
-    climato_plot = hv.Area(
-        (weekly_indices, smoothed_lower, smoothed_upper),
-        vdims=['y', 'y2'],
-        label="IQR-based Range"
-    ).opts(
-        color='lightblue',
-        alpha=0.5,
-        title='Climatological Year Temperature Range',
-        xlabel='Month',
-        ylabel=r"Temperature [°C]",
-        responsive=True,
-        )
-
-    # Add the smoothed median line (in weekly scale)
-    climato_plot_median = hv.Curve(
-        (weekly_indices, smoothed_medians),
-        label='Median'
-    ).opts(
-        color='blue',
-        line_width=2,
-        responsive=True,
-        )
-
-    month_boundaries = [
-      0,    # January
-      1, # February
-      2,  # March
-      3, # April
-      4,  # May
-      5, # June
-      6,  # July
-      7, # August
-      8,  # September
-      9, # October
-      10,  # November
-      11  # December
-    ]
-
-    month_labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-# Create the combined plot
-    combined_plot = climato_plot * climato_plot_median
-
-# Set x-ticks and labels for months
-    combined_plot.opts(
-      xticks=[(i, label) for i, label in zip(month_boundaries, month_labels)],
-      show_grid=True
-    )
-
-    # Show the combined plot
-    return combined_plot
-
-def plot_obs(df):
-    hover = HoverTool(tooltips=[
-        ('Date', '@Date{%F}'),
-        ('Temperature', '@Temperature'),
-        ('Anomaly', '@Temperature_Anomaly')
-    ], formatters={'@Date': 'datetime'})
-
-    scatter_plot = hv.Scatter(
-        df,
-        kdims=['fractional_time'],
-        vdims=['Temperature', 'Temperature_Anomaly', 'Date']
-    ).opts(
-        tools=[hover, 'pan', 'wheel_zoom', 'box_zoom', 'reset'],
-        color='Temperature_Anomaly',
-        cmap='coolwarm',
-        clim=(-3, 3),
-        size=5,
-        alpha=0.4,
-        xlabel='Month',
-        ylabel=r"Temperature [°C]",
-        legend_position='top_left'
-    )
-    return scatter_plot
-
-
-def plot_rolling_by_year(df, window=11, min_year=2025):
-    """
-    For each year >= min_year, compute a rolling median + Savitzky-Golay smooth
-    of temperature vs fractional_time and return a HoloViews Overlay of Curves.
-    Colors cycle automatically so future years are handled.
-    """
-    df = df.copy()
-    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
-    df = df.dropna(subset=['Date', 'Temperature', 'fractional_time'])
-    df['year'] = df['Date'].dt.year
-    df = df[df['year'] >= min_year]
-
-    # Distinct warm colours — avoid blue already used by the climatology median
-    year_colors = ['#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
-                   '#e67e22', '#1abc9c', '#e91e63', '#ff5722']
-
-    curves = []
-    for i, year in enumerate(sorted(df['year'].unique())):
-        year_df = (df[df['year'] == year]
-                   .sort_values('fractional_time')
-                   .reset_index(drop=True))
-        if len(year_df) < 5:
-            continue
-
-        w = min(window, max(3, len(year_df) // 2))
-        rolling = (year_df['Temperature']
-                   .rolling(window=w, min_periods=3, center=True)
-                   .median())
-        valid = rolling.notna()
-        if valid.sum() < 5:
-            continue
-
-        # Apply Savitzky-Golay for additional smoothness
-        vals = rolling[valid].values
-        sg_window = min(len(vals), 15)
-        if sg_window % 2 == 0:
-            sg_window -= 1
-        sg_window = max(sg_window, 5)
-        smoothed = savgol_filter(vals, window_length=sg_window, polyorder=2)
-
-        color = year_colors[i % len(year_colors)]
-        curve = hv.Curve(
-            (year_df['fractional_time'][valid].values, smoothed),
-            label=str(year)
-        ).opts(color=color, line_width=2.5)
-        curves.append(curve)
-
-    return hv.Overlay(curves) if curves else hv.Curve([])
-
 def get_data_from_temp_sensors_full(filepath, team_name='Escuela Salle', location='IEO', lat=None, lon=None):
     # Read the data
     data = pd.read_csv(filepath)
@@ -381,5 +206,3 @@ def get_data_from_temp_sensors_full(filepath, team_name='Escuela Salle', locatio
     })
 
     return df_full
-
-
