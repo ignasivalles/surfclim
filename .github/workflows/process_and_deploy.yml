@@ -38,7 +38,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/individual_data.csv plots/
+          git add data/individual_data.csv data/mhw_status.json data/cmems_climatology.json plots/
           git diff --cached --quiet || git commit -m "data: regenerate individual_data.csv and plots [skip ci]"
           git push origin HEAD:${{ github.ref }}
         env:

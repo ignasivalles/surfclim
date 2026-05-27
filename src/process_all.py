@@ -18,6 +18,7 @@ What it does:
 
 import sys
 import glob
+import json
 import pathlib
 import argparse
 
@@ -124,6 +125,59 @@ def process_raw_files(raw_dir):
     return filtered[cols].sort_values('Date').reset_index(drop=True)
 
 
+# ── MHW thresholds (Hobday 2016) ──────────────────────────────────────────────
+# Primary: CMEMS ESA SST CCI 1991-2020 (data/cmems_climatology.json)
+# Fallback: 1970-78 Sardinero/Magdalena baseline (if JSON not found)
+_CMEMS_JSON = ROOT / 'data' / 'cmems_climatology.json'
+if _CMEMS_JSON.exists():
+    _cmems_raw = json.loads(_CMEMS_JSON.read_text())
+    _MHW_P90   = {int(m): _cmems_raw[m]['p90']   for m in _cmems_raw if m != '_meta'}
+    _MHW_DELTA = {int(m): _cmems_raw[m]['delta']  for m in _cmems_raw if m != '_meta'}
+    _MHW_SOURCE = _cmems_raw.get('_meta', {}).get('period', '1991-2020')
+else:
+    print("WARNING: cmems_climatology.json not found — falling back to 1970-78 thresholds")
+    _MHW_P90 = {
+        1: 12.31, 2: 12.14, 3: 13.00, 4: 13.50, 5: 15.50, 6: 17.10,
+        7: 19.90, 8: 20.80, 9: 20.00, 10: 18.00, 11: 15.80, 12: 13.99,
+    }
+    _MHW_DELTA = {
+        1: 1.41, 2: 1.14, 3: 1.60, 4: 1.05, 5: 1.70, 6: 1.10,
+        7: 1.95, 8: 1.40, 9: 1.75, 10: 2.00, 11: 2.10, 12: 1.99,
+    }
+    _MHW_SOURCE = '1970-78'
+
+
+def _mhw_category(temp, month):
+    p90, delta = _MHW_P90[month], _MHW_DELTA[month]
+    if temp >= p90 + 3 * delta: return 'Extreme'
+    if temp >= p90 + 2 * delta: return 'Severe'
+    if temp >= p90 +     delta: return 'Strong'
+    if temp >= p90:              return 'Moderate'
+    return 'None'
+
+
+def compute_mhw_status(df):
+    """Return a dict with current MHW status based on the latest observation."""
+    df = df.copy()
+    df['Date'] = pd.to_datetime(df['Date'])
+    latest = df.sort_values('Date').iloc[-1]
+    month  = int(latest['Date'].month)
+    temp   = float(latest['Temperature'])
+    p90    = _MHW_P90[month]
+    delta  = _MHW_DELTA[month]
+    cat    = _mhw_category(temp, month)
+    return {
+        'category':        cat,
+        'temperature':     round(temp, 2),
+        'p90':             p90,
+        'delta':           delta,
+        'anomaly_vs_p90':  round(temp - p90, 2),
+        'date':            str(latest['Date'].date()),
+        'month':           month,
+        'threshold_source': _MHW_SOURCE,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description='Process EnvLogger raw files and regenerate surfclim plots')
     parser.add_argument(
@@ -147,7 +201,14 @@ def main():
     print(f"  Date range : {all_data['Date'].min().date()} → {all_data['Date'].max().date()}")
     print(f"  Temp range : {all_data['Temperature'].min():.1f} – {all_data['Temperature'].max():.1f} °C")
 
-    # Step 2: regenerate plots
+    # Step 2: MHW status JSON
+    mhw = compute_mhw_status(all_data)
+    mhw_json = ROOT / 'data' / 'mhw_status.json'
+    with open(mhw_json, 'w') as f:
+        json.dump(mhw, f, indent=2)
+    print(f"\n✓ MHW status: {mhw['category']} ({mhw['temperature']} °C, p90={mhw['p90']} °C) → {mhw_json}")
+
+    # Step 3: regenerate plots
     print("\nGenerating plots...")
     from generate_plots import main as generate_plots
     generate_plots()

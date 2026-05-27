@@ -1,0 +1,103 @@
+{
+  "1": {
+    "month_name": "Jan",
+    "median": 12.996,
+    "p90": 13.949,
+    "delta": 0.953,
+    "n_days": 930
+  },
+  "2": {
+    "month_name": "Feb",
+    "median": 12.506,
+    "p90": 13.216,
+    "delta": 0.71,
+    "n_days": 848
+  },
+  "3": {
+    "month_name": "Mar",
+    "median": 12.574,
+    "p90": 13.253,
+    "delta": 0.679,
+    "n_days": 930
+  },
+  "4": {
+    "month_name": "Apr",
+    "median": 13.261,
+    "p90": 14.368,
+    "delta": 1.107,
+    "n_days": 900
+  },
+  "5": {
+    "month_name": "May",
+    "median": 15.128,
+    "p90": 16.858,
+    "delta": 1.73,
+    "n_days": 930
+  },
+  "6": {
+    "month_name": "Jun",
+    "median": 18.013,
+    "p90": 19.785,
+    "delta": 1.772,
+    "n_days": 900
+  },
+  "7": {
+    "month_name": "Jul",
+    "median": 20.565,
+    "p90": 22.143,
+    "delta": 1.578,
+    "n_days": 930
+  },
+  "8": {
+    "month_name": "Aug",
+    "median": 21.765,
+    "p90": 22.708,
+    "delta": 0.943,
+    "n_days": 930
+  },
+  "9": {
+    "month_name": "Sep",
+    "median": 20.564,
+    "p90": 21.859,
+    "delta": 1.295,
+    "n_days": 900
+  },
+  "10": {
+    "month_name": "Oct",
+    "median": 18.262,
+    "p90": 19.897,
+    "delta": 1.635,
+    "n_days": 930
+  },
+  "11": {
+    "month_name": "Nov",
+    "median": 15.812,
+    "p90": 17.131,
+    "delta": 1.319,
+    "n_days": 900
+  },
+  "12": {
+    "month_name": "Dec",
+    "median": 14.06,
+    "p90": 14.948,
+    "delta": 0.888,
+    "n_days": 930
+  },
+  "_meta": {
+    "dataset_id": "C3S-GLO-SST-L4-REP-OBS-SST",
+    "variable": "analysed_sst",
+    "bbox": {
+      "lon": [
+        -5.0,
+        -3.0
+      ],
+      "lat": [
+        43.2,
+        43.9
+      ]
+    },
+    "period": "1991\u20132020",
+    "method": "spatial mean per day \u2192 per-month p90 / median across all years",
+    "reference": "Hobday et al. 2016, Prog. Oceanogr."
+  }
+}

@@ -6,6 +6,141 @@
     <title>Stories — surfclim</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css"/>
+    <style>
+        /* ── Stories index ── */
+        .stories-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 24px 64px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .stories-section h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text);
+            margin: 0 0 8px;
+            letter-spacing: -0.4px;
+        }
+
+        .stories-lead {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            margin: 0 0 40px;
+            max-width: 560px;
+            line-height: 1.6;
+        }
+
+        /* ── Story card grid ── */
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .story-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s, transform 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .story-card:hover {
+            box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+        .story-card-hero {
+            height: 160px;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a3a52 55%, #0d2b3e 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 16px 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-card-hero img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.35;
+        }
+
+        .story-card-tag {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(100,210,235,0.9);
+            background: rgba(0,0,0,0.35);
+            padding: 3px 8px;
+            border-radius: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .story-card-body {
+            padding: 18px 18px 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .story-card-date {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .story-card-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text);
+            margin: 0 0 10px;
+            letter-spacing: -0.2px;
+            line-height: 1.25;
+        }
+
+        .story-card-desc {
+            font-size: 0.84rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0 0 16px;
+            flex: 1;
+        }
+
+        .story-card-read {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .story-card-read::after {
+            content: '→';
+        }
+
+        @media (max-width: 680px) {
+            .stories-section { padding: 32px 16px 48px; }
+            .story-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
 <div class="app">
@@ -22,10 +157,30 @@
     </header>
 
     <!-- ══ CONTENT ══ -->
-    <main class="prose-section">
-        <div class="prose-body">
-            <h1>Stories</h1>
-            <p class="stories-coming">Coming soon — data stories about the Cantabrian Sea.</p>
+    <main class="stories-section">
+        <h1>Stories</h1>
+        <p class="stories-lead">Data stories from the Cantabrian coast — what the numbers say, and why it matters when you're in the water.</p>
+
+        <div class="story-grid">
+
+            <!-- Story 01: The Summer Spiral -->
+            <a class="story-card" href="stories/upwelling_summer_2025/index.html">
+                <div class="story-card-hero">
+                    <img src="assets/coastal_upwelling.jpg" alt="Coastal upwelling cross-section"/>
+                    <span class="story-card-tag">Upwelling &middot; Cantabrian Sea</span>
+                </div>
+                <div class="story-card-body">
+                    <div class="story-card-date">August 2025</div>
+                    <h2 class="story-card-title">The Summer Spiral</h2>
+                    <p class="story-card-desc">
+                        Mid-August 2025: water temperatures dropped nearly 4&thinsp;&deg;C in five days, in the
+                        middle of summer. Wind, satellite and in-situ sensor data tell the full story of a
+                        coastal upwelling event — and why surf-forecast SST apps missed it entirely.
+                    </p>
+                    <span class="story-card-read">Read story</span>
+                </div>
+            </a>
+
         </div>
     </main>
 

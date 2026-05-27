@@ -14,3 +14,7 @@ Thumbs.db
 .idea/
 Dash.html
 Dash_files/
+
+# Large generated files in stories (animations, raw science data)
+stories/**/data/*.nc
+stories/**/*_animation.html

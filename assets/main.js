@@ -3,6 +3,7 @@
   'use strict';
 
   var CSV_PATH        = 'data/individual_data.csv';
+  var MHW_JSON_PATH   = 'data/mhw_status.json';
   var MAP_CENTER      = [43.55, -4.0];
   var MAP_ZOOM        = 10;
   var MAP_ZOOM_MOBILE = 9;
@@ -40,6 +41,77 @@
     }
     return 'rgb(' + r + ',' + g + ',' + b + ')';
   }
+
+  /* ── MHW thresholds — loaded from cmems_climatology.json ─────────
+     Falls back to hardcoded 1970-78 values if the JSON is unavailable.  */
+  var MHW_P90   = null;  // populated after fetch
+  var MHW_DELTA = null;
+  var MHW_SOURCE = '1991–2020 (CMEMS)';
+
+  // Fallback: 1970-78 Sardinero/Magdalena baseline
+  var MHW_P90_FALLBACK   = {1:12.31,2:12.14,3:13.00,4:13.50,5:15.50,6:17.10,
+                             7:19.90,8:20.80,9:20.00,10:18.00,11:15.80,12:13.99};
+  var MHW_DELTA_FALLBACK = {1:1.41,2:1.14,3:1.60,4:1.05,5:1.70,6:1.10,
+                             7:1.95,8:1.40,9:1.75,10:2.00,11:2.10,12:1.99};
+
+  function mhwCategory(temp, month) {
+    var p90   = (MHW_P90   || MHW_P90_FALLBACK)[month];
+    var delta = (MHW_DELTA || MHW_DELTA_FALLBACK)[month];
+    if (temp >= p90 + 3 * delta) return 'Extreme';
+    if (temp >= p90 + 2 * delta) return 'Severe';
+    if (temp >= p90 +     delta) return 'Strong';
+    if (temp >= p90)              return 'Moderate';
+    return 'None';
+  }
+
+  var MHW_STYLE = {
+    'None':     { color: '#27ae60', bg: '' },
+    'Moderate': { color: '#f39c12', bg: 'rgba(243,156,18,0.06)' },
+    'Strong':   { color: '#e67e22', bg: 'rgba(230,126,34,0.07)' },
+    'Severe':   { color: '#e74c3c', bg: 'rgba(231,76,60,0.07)' },
+    'Extreme':  { color: '#8e1c1c', bg: 'rgba(142,28,28,0.09)' },
+  };
+
+  function fillMhwCard(category, temp, p90, dateLabel) {
+    var card    = document.getElementById('card-mhw');
+    var valueEl = document.getElementById('card-mhw-value');
+    var subEl   = document.getElementById('card-mhw-sub');
+    var dateEl  = document.getElementById('card-mhw-date');
+    if (!card) return;
+
+    var s = MHW_STYLE[category] || MHW_STYLE['None'];
+    valueEl.textContent    = category;
+    valueEl.style.color    = s.color;
+    valueEl.style.fontSize = '1.35rem';
+
+    var diff = (temp - p90);
+    subEl.textContent = (diff >= 0 ? '+' : '') + diff.toFixed(1) + '°C vs p90 (' + p90.toFixed(1) + '°C)';
+    subEl.style.color = s.color;
+
+    dateEl.textContent = dateLabel;
+    if (s.bg) card.style.background = s.bg;
+    card.style.borderLeft = '3px solid ' + s.color;
+  }
+
+  // Load CMEMS thresholds, then trigger MHW card if CSV already processed
+  var _mhwPending = null;  // holds {temp, month, p90Fallback, dateLabel} until thresholds ready
+  fetch(MHW_JSON_PATH)
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      MHW_P90   = {};
+      MHW_DELTA = {};
+      for (var m = 1; m <= 12; m++) {
+        MHW_P90[m]   = data[String(m)].p90;
+        MHW_DELTA[m] = data[String(m)].delta;
+      }
+      MHW_SOURCE = (data._meta || {}).period || '1991–2020';
+      if (_mhwPending) {
+        var p = _mhwPending;
+        fillMhwCard(mhwCategory(p.temp, p.month), p.temp, MHW_P90[p.month], p.dateLabel);
+        _mhwPending = null;
+      }
+    })
+    .catch(function () { /* use fallback values already in MHW_P90_FALLBACK */ });
 
   /* ── Stat cards ─────────────────────────────────────────────────── */
   var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun',
@@ -185,6 +257,22 @@
                      mean(yearRows.map(function (r) { return parseFloat(r.Temperature); })),
                      mean(yearRows.map(function (r) { return parseFloat(r.Temperature_Anomaly); })),
                      String(lY));
+          }
+
+          /* ─ MHW card ─ */
+          var latestTemp  = parseFloat(latest.Temperature);
+          var latestMonth = latestDate.getMonth() + 1;
+          var dateLabel   = latestDate.toISOString().slice(0, 10);
+          if (MHW_P90) {
+            // CMEMS thresholds already loaded
+            fillMhwCard(mhwCategory(latestTemp, latestMonth),
+                        latestTemp, MHW_P90[latestMonth], dateLabel);
+          } else {
+            // Thresholds still loading — stash and fill once ready
+            _mhwPending = { temp: latestTemp, month: latestMonth, dateLabel: dateLabel };
+            // Immediate render with fallback
+            fillMhwCard(mhwCategory(latestTemp, latestMonth),
+                        latestTemp, MHW_P90_FALLBACK[latestMonth], dateLabel);
           }
 
           /* ─ Map markers ─ */
