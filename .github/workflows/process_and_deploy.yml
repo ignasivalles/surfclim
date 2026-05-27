@@ -19,7 +19,7 @@ jobs:
       - name: Clone pom-cost raw data
         run: |
           git clone --depth=1 \
-            --branch redesign/beautiful-jekyll-style \
+            --branch main \
             https://github.com/pom-cost/pom-cost.github.io.git \
             /tmp/pom-cost
 
