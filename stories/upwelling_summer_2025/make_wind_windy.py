@@ -458,6 +458,7 @@ const velocityLayer = L.velocityLayer({{
 
 // ── Playback ──────────────────────────────────────────────────────────────────
 let idx = 0, fps = 8, timer = null;
+let _lastSSTDate = null;
 
 function showFrame(i) {{
   idx = i;
@@ -466,7 +467,11 @@ function showFrame(i) {{
     FRAMES[i].ts.replace('T', ' · ').replace('Z', ' UTC');
   velocityLayer.setData(makeVelocityData(FRAMES[i]));
   const _d = FRAMES[i].ts.slice(0, 10);
-  if (SST_IMGS[_d]) {{ sstOverlay.setUrl(SST_IMGS[_d]); loadSSTCanvas(SST_IMGS[_d]); }}
+  if (_d !== _lastSSTDate && SST_IMGS[_d]) {{
+    sstOverlay.setUrl(SST_IMGS[_d]);
+    loadSSTCanvas(SST_IMGS[_d]);
+    _lastSSTDate = _d;
+  }}
 }}
 
 function play()  {{

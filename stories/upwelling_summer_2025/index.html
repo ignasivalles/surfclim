@@ -463,11 +463,16 @@ const velLayer = L.velocityLayer({
 const slider = document.getElementById('wind-slider');
 const tsDsp  = document.getElementById('ts-display');
 
+let _lastSSTDate = null;
 function showFrame(i) {
   tsDsp.textContent = FRAMES[i].ts.replace('T', ' · ').replace('Z', ' UTC');
   velLayer.setData(makeVData(FRAMES[i]));
   const _d = FRAMES[i].ts.slice(0, 10);
-  if (SST_IMGS[_d]) { sstOverlay.setUrl(SST_IMGS[_d]); loadSSTCanvas(SST_IMGS[_d]); }
+  if (_d !== _lastSSTDate && SST_IMGS[_d]) {
+    sstOverlay.setUrl(SST_IMGS[_d]);
+    loadSSTCanvas(SST_IMGS[_d]);
+    _lastSSTDate = _d;
+  }
 }
 
 slider.oninput = e => showFrame(parseInt(e.target.value));
