@@ -534,7 +534,7 @@ function makeVData(f) {{
 
 const map = L.map('wind-map', {{center: [{ctr_lat}, {ctr_lon}], zoom: 7, zoomControl: true}});
 
-L.tileLayer('https://{{s}}.basemaps.cartocdn.com/dark_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{
+L.tileLayer('https://basemaps.cartocdn.com/rastertiles/dark_all/{{z}}/{{x}}/{{y}}{{r}}.png?key=cb1_48r0_1_cbfcd356ce66b93885df6f4f', {{
   attribution: '&copy; OpenStreetMap &copy; CARTO',
   subdomains: 'abcd', maxZoom: 19,
 }}).addTo(map);

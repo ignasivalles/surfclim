@@ -144,7 +144,7 @@
     var isMobile = window.innerWidth < MOBILE_BP;
     map = L.map('map').setView(MAP_CENTER, isMobile ? MAP_ZOOM_MOBILE : MAP_ZOOM);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png?key=cb1_48r0_1_cbfcd356ce66b93885df6f4f', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
       maxZoom: 19
     }).addTo(map);
