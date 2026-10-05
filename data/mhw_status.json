@@ -1,10 +1,10 @@
 {
-  "category": "None",
-  "temperature": 19.24,
+  "category": "Moderate",
+  "temperature": 20.14,
   "p90": 19.897,
   "delta": 1.635,
-  "anomaly_vs_p90": -0.66,
-  "date": "2026-10-03",
+  "anomaly_vs_p90": 0.24,
+  "date": "2026-10-05",
   "month": 10,
   "threshold_source": "1991\u20132020"
 }
